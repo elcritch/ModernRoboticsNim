@@ -60,7 +60,7 @@ proc pretty*[V](mat: (RotationMatrix[V], PositionVec[V]); precision = 2;
 
 {.push hint[Name]: off.}
 
-type poly* {.pure.} = enum
+type Poly* {.pure.} = enum
   cubic, quintic
 
 template norm*(mat: Matrices or Vectors): untyped =

@@ -221,7 +221,7 @@ func iKinBody*[I: static[int], V](
     thetalist = thetalist + (pinv(jacobianBody(Blist, thetalist)) *
             Vb.asDynamic).asStatic(I)
     inc i
-    Vb = se3ToVec(log6((transInv(FKinBody(M, Blist, thetalist)) * T)))
+    Vb = se3ToVec(log6((transInv(fKinBody(M, Blist, thetalist)) * T)))
     err = norm(vector([Vb[0], Vb[1], Vb[2]])) > eomg or norm(vector([Vb[3],
             Vb[4], Vb[5]])) > ev
   return (thetalist, not err)
@@ -284,7 +284,7 @@ func iKinSpace*[I: static[int], V](
   var
     thetalist = thetalist0.clone
     i = 0
-    Tsb = FKinSpace(M, Slist, thetalist)
+    Tsb = fKinSpace(M, Slist, thetalist)
     Vs = adjoint(Tsb) * se3ToVec(log6((transInv(Tsb) * T)))
     err = norm(vector([Vs[0], Vs[1], Vs[2]])) > eomg or norm(vector([Vs[3],
             Vs[4], Vs[5]])) > ev
@@ -292,7 +292,7 @@ func iKinSpace*[I: static[int], V](
     thetalist = thetalist + (pinv(jacobianSpace(Slist, thetalist)) *
             Vs.asDynamic).asStatic(I)
     inc i
-    Tsb = FKinSpace(M, Slist, thetalist)
+    Tsb = fKinSpace(M, Slist, thetalist)
     Vs = adjoint(Tsb) * se3ToVec(log6((transInv(Tsb) * T)))
     err = norm(vector([Vs[0], Vs[1], Vs[2]])) > eomg or norm(vector([Vs[3],
             Vs[4], Vs[5]])) > ev

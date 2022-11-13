@@ -108,7 +108,7 @@ func toRotation*[V](u: TriVector[V], theta: V): RotationMatrix[V] =
 func toRotation*[V](aa: AxisAng[V]): RotationMatrix[V] =
   toRotation(aa[0], aa[1])
 
-func matrixExp3*[V](m: So3Mat[V]): TriMatrix[V] =
+func exp3*[V](m: So3Mat[V]): TriMatrix[V] =
   ##[
         Computes the matrix exponential of a matrix in so(3)
     :param so3mat: A 3x3 skew-symmetric matrix
