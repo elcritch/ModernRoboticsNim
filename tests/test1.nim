@@ -185,7 +185,7 @@ suite "kinematics":
                       [0.0, 0, -1, 0],
                       [0.0, 1,  0, 3],
                       [0.0, 0,  0, 1]])
-    check: Q.Adjoint == matrix([[1.0, 0,  0, 0, 0,  0],
+    check: Q.adjoint() == matrix([[1.0, 0,  0, 0, 0,  0],
                                 [0.0, 0, -1, 0, 0,  0],
                                 [0.0, 1,  0, 0, 0,  0],
                                 [0.0, 0,  3, 1, 0,  0],
@@ -222,7 +222,7 @@ suite "kinematics":
     let mat = matrix(  [[ 0.675,  0.150,  0.720],
                         [ 0.370,  0.771, -0.511],
                         [-0.630,  0.619,  0.472]])
-    check mat.ProjectToSO3 =~ matrix([  [ 0.67901136,  0.14894516,  0.71885945],
+    check mat.projectToSo3() =~ matrix([  [ 0.67901136,  0.14894516,  0.71885945],
                                         [ 0.37320708,  0.77319584, -0.51272279],
                                         [-0.63218672,  0.61642804,  0.46942137]])
   
@@ -230,7 +230,7 @@ suite "kinematics":
     check matrix([[ 0.675,  0.150,  0.720,  1.2],
                   [ 0.370,  0.771, -0.511,  5.4],
                   [-0.630,  0.619,  0.472,  3.6],
-                  [ 0.003,  0.002,  0.010,  0.9]]).ProjectToSE3 =~ 
+                  [ 0.003,  0.002,  0.010,  0.9]]).projectToSe3() =~ 
                   matrix([[ 0.67901136,  0.14894516,  0.71885945,  1.2 ],
                           [ 0.37320708,  0.77319584, -0.51272279,  5.4 ],
                           [-0.63218672,  0.61642804,  0.46942137,  3.6 ],
@@ -238,24 +238,24 @@ suite "kinematics":
   test "DistanceToSO3":
     check: matrix([     [ 1.0,  0.0,   0.0 ],
                         [ 0.0,  0.1,  -0.95],
-                        [ 0.0,  1.0,   0.1 ]]).DistanceToSO3 =~ 0.088352985
+                        [ 0.0,  1.0,   0.1 ]]).distanceToSO3() =~ 0.088352985
 
   test "DistanceToSE3":
     check: matrix([     [ 1.0,  0.0,   0.0,   1.2 ],
                         [ 0.0,  0.1,  -0.95,  1.5 ],
                         [ 0.0,  1.0,   0.1,  -0.9 ],
-                        [ 0.0,  0.0,   0.1,   0.98 ]]).DistanceToSE3 =~ 0.134930537
+                        [ 0.0,  0.0,   0.1,   0.98 ]]).distanceToSE3() =~ 0.134930537
 
   test "TestIfSO3":
     check: matrix([     [1.0, 0.0,  0.0 ],
                         [0.0, 0.1, -0.95],
-                        [0.0, 1.0,  0.1 ]]).TestIfSO3 == false
+                        [0.0, 1.0,  0.1 ]]).testIfSO3() == false
   
   test "TestIfSE3":
     check: matrix([     [1.0, 0.0,   0.0,  1.2],
                         [0.0, 0.1, -0.95,  1.5],
                         [0.0, 1.0,   0.1, -0.9],
-                        [0.0, 0.0,   0.1, 0.98]]).TestIfSE3 == false
+                        [0.0, 0.0,   0.1, 0.98]]).testIfSE3() == false
   test "FKinBody":
     let 
       m = matrix([    [-1.0, 0,  0, 0],
@@ -268,7 +268,7 @@ suite "kinematics":
                           [0.0, 0,  1, 0, 0, 0.1]]).T
       thetalist = vector([Pi / 2.0, 3, Pi])
 
-    check: FKinBody(m,blist,thetalist) =~ matrix([  [0.0, 1,  0,         -5],
+    check: fKinBody(m,blist,thetalist) =~ matrix([  [0.0, 1,  0,         -5],
                                                     [1.0, 0,  0,          4],
                                                     [0.0, 0, -1, 1.68584073],
                                                     [0.0, 0,  0,          1]])
@@ -285,13 +285,13 @@ suite "kinematics":
       thetalist = vector([Pi / 2.0, 3, Pi])
 
 
-    check: FKinSpace(M,Slist,thetalist) =~ matrix([   [0.0, 1,  0,         -5],
+    check: fKinSpace(M,Slist,thetalist) =~ matrix([   [0.0, 1,  0,         -5],
                                                       [1.0, 0,  0,          4],
                                                       [0.0, 0, -1, 1.68584073],
                                                       [0.0, 0,  0,          1]])
   test "JacobianBody":
     
-    check: JacobianBody(jointscrewaxis,thetalisttest) =~ matrix([   [-0.04528405, 0.99500417,           0,   1],
+    check: jacobianBody(jointscrewaxis,thetalisttest) =~ matrix([   [-0.04528405, 0.99500417,           0,   1],
                                                                     [ 0.74359313, 0.09304865,  0.36235775,   0],
                                                                     [-0.66709716, 0.03617541, -0.93203909,   0],
                                                                     [ 2.32586047,    1.66809,  0.56410831, 0.2],
@@ -299,7 +299,7 @@ suite "kinematics":
                                                                     [-2.06639565, 1.82881722, -1.58868628, 0.4]])
 
   test "JacobianSpace":
-    check: JacobianSpace(jointscrewaxis, thetalisttest) =~ matrix([   [  0.0, 0.98006658, -0.09011564,  0.95749426],
+    check: jacobianSpace(jointscrewaxis, thetalisttest) =~ matrix([   [  0.0, 0.98006658, -0.09011564,  0.95749426],
                                                                       [  0.0, 0.19866933,   0.4445544,  0.28487557],
                                                                       [  1.0,          0,  0.89120736, -0.04528405],
                                                                       [  0.0, 1.95218638, -2.21635216, -0.51161537],
@@ -311,7 +311,7 @@ suite "kinematics":
                           [0.0, 0,  0, 0, 1,   0],
                           [0.0, 0,  1, 0, 0, 0.1]]).T
        
-        ikinres = IkinBody(Blist,ikinM,ikinT,ikinthetalist0,ikineomg,ikinev)
+        ikinres = ikinBody(Blist,ikinM,ikinT,ikinthetalist0,ikineomg,ikinev)
     check: ikinres[0] =~ vector([1.57073819, 2.999667, 3.14153913])
     check: ikinres[1] == true
 
@@ -320,7 +320,7 @@ suite "kinematics":
       Slist = matrix([    [0.0, 0,  1,  4, 0,    0],
                           [0.0, 0,  0,  0, 1,    0],
                           [0.0, 0, -1, -6, 0, -0.1]]).T
-      ikinres = IKinSpace(SList,ikinM,ikinT,ikinthetalist0,ikineomg,ikinev)
+      ikinres = iKinSpace(SList,ikinM,ikinT,ikinthetalist0,ikineomg,ikinev)
 
     check: ikinres[0] =~ vector([1.57073819, 2.999667, 3.14153913])
     check: ikinres[1] == true
@@ -335,24 +335,24 @@ suite "kinematics":
 
   test "InverseDynamics":
     
-    check: InverseDynamics(dynthetalist,dyndthetalist,dynddthetalist,g,Ftip,Mlist,Glist,Slist) =~ vector([74.69616155, -33.06766016, -3.23057314])
+    check: inverseDynamics(dynthetalist,dyndthetalist,dynddthetalist,g,Ftip,Mlist,Glist,Slist) =~ vector([74.69616155, -33.06766016, -3.23057314])
 
   test "MassMatrix":
-    check: MassMAtrix(dynthetalist,Mlist,Glist,Slist) =~ matrix([[ 2.25433380e+01, -3.07146754e-01, -7.18426391e-03],
+    check: massMAtrix(dynthetalist,Mlist,Glist,Slist) =~ matrix([[ 2.25433380e+01, -3.07146754e-01, -7.18426391e-03],
                                                                  [-3.07146754e-01,  1.96850717e+00,  4.32157368e-01],
                                                                  [-7.18426391e-03,  4.32157368e-01,  1.91630858e-01]])
   
   test "VelQuadraticForces":
-    check: VelQuadraticForces(dynthetalist,dyndthetalist,Mlist,Glist,Slist) =~ vector([0.26453118, -0.05505157, -0.00689132])
+    check: velQuadraticForces(dynthetalist,dyndthetalist,Mlist,Glist,Slist) =~ vector([0.26453118, -0.05505157, -0.00689132])
   
   test "GravityForces":
-    check: GravityForces(dynthetalist,g,Mlist,Glist,Slist) =~ vector([28.40331262, -37.64094817, -5.4415892])
+    check: gravityForces(dynthetalist,g,Mlist,Glist,Slist) =~ vector([28.40331262, -37.64094817, -5.4415892])
 
   test "EndEffectorForces":
-    check: EndEffectorForces(dynthetalist,Ftip,Mlist,Glist,Slist) =~ vector([1.40954608, 1.85771497, 1.392409])
+    check: endEffectorForces(dynthetalist,Ftip,Mlist,Glist,Slist) =~ vector([1.40954608, 1.85771497, 1.392409])
 
   test "ForwardDynamics":
-    check: ForwardDynamics(dynthetalist,dyndthetalist,vector([0.5, 0.6, 0.7]),g,Ftip,Mlist,Glist,Slist) =~ vector([-0.97392907, 25.58466784, -32.91499212])
+    check: forwardDynamics(dynthetalist,dyndthetalist,vector([0.5, 0.6, 0.7]),g,Ftip,Mlist,Glist,Slist) =~ vector([-0.97392907, 25.58466784, -32.91499212])
 
   test "EulerStep":
     let esres = EulerStep(dynthetalist,dyndthetalist,dynddthetalist,0.1)
@@ -361,14 +361,14 @@ suite "kinematics":
   #test "InverseDynamicsTrajectory":
   #test "ForwardDynamicsTrajectory"
   test "CubicTimeScaling":
-    check: CubicTimeScaling(2.0,0.6) =~ 0.216
+    check: cubicTimeScaling(2.0,0.6) =~ 0.216
   test "QuinticTimeScaling":
-    check: QuinticTimeScaling(2.0,0.6) =~ 0.16308
+    check: quinticTimeScaling(2.0,0.6) =~ 0.16308
   test "JointTrajectory":
     let
       thetastart = vector([1.0, 0, 0, 1, 1, 0.2, 0,1])
       thetaend = vector([1.2, 0.5, 0.6, 1.1, 2, 2, 0.9, 1])
-    check: JointTrajectory(thetastart,thetaend,4,6,cubic) =~ matrix([[1.0,    0,     0,      1,      1,     0.2,    0,        1],
+    check: jointTrajectory(thetastart,thetaend,4,6,cubic) =~ matrix([[1.0,    0,     0,      1,      1,     0.2,    0,        1],
                                                                      [1.0208, 0.052, 0.0624, 1.0104, 1.104, 0.3872, 0.0936,   1],
                                                                      [1.0704, 0.176, 0.2112, 1.0352, 1.352, 0.8336, 0.3168,   1],
                                                                      [1.1296, 0.324, 0.3888, 1.0648, 1.648, 1.3664, 0.5832,   1],
@@ -377,7 +377,7 @@ suite "kinematics":
       
   test "ScrewTrajectory":
     let
-      stres = ScrewTrajectory(Xstart,Xend,5.0,4,cubic)
+      stres = screwTrajectory(Xstart,Xend,5.0,4,cubic)
 
     check: stres[0] =~ matrix([[1.0, 0, 0, 1],
                                [0.0, 1, 0, 0],
@@ -397,7 +397,7 @@ suite "kinematics":
                                 [0.0, 1, 0, 4.1],
                                 [0.0, 0, 0,   1]])
   test "CartesianTrajectory":
-    let ctres = CartesianTrajectory(Xstart,Xend,5.0,4,quintic)
+    let ctres = cartesianTrajectory(Xstart,Xend,5.0,4,quintic)
    
     check: ctres[0] =~ matrix([[1.0, 0, 0, 1],
                                [0.0, 1, 0, 0],
@@ -420,7 +420,7 @@ suite "kinematics":
                                 [0.0, 0, 0,   1]])
 
   test "ComputedTorque":
-    let comtor = ComputedTorque(dynthetalist,
+    let comtor = computedTorque(dynthetalist,
                                 dyndthetalist,
                                 vector([0.2, 0.2, 0.2]),
                                 g, Mlist, Glist, Slist,

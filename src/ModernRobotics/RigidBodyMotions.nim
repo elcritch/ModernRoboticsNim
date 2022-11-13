@@ -297,7 +297,7 @@ func adjoint*[V](qq: QuadMatrix[V]): HexMatrix[V] =
   ##               [0, 0,  0, 0, 1,  0]])
   ## 
   let
-    (rr, p) = qq.TransToRp
+    (rr, p) = qq.transToRp()
     rd = rr.asDynamic
   (rd.hstack(zeros(3, 3, V).asDynamic).vstack(((toSo3(p) * rr).asDynamic).hstack(rd))).asStatic(6, 6)
 
@@ -335,7 +335,7 @@ func axisang6*[V](expc6: HexVector[V]): (HexVector[V], V) =
   ##     (vector([1.0, 0.0, 0.0, 1.0, 2.0, 3.0]), 1.0)
   ## 
   var theta = vector([expc6[0], expc6[1], expc6[2]]).norm
-  if theta.NearZero:
+  if theta.nearZero():
     theta = vector([expc6[3], expc6[4], expc6[5]]).norm
 
   result = (expc6/theta, theta)
@@ -365,7 +365,7 @@ func exp6*[V](se3mat: QuadMatrix[V]): QuadMatrix[V] =
     se3matdyn = se3mat.asDynamic
 
 
-  if omgtheta.norm.NearZero:
+  if omgtheta.norm.nearZero():
     return (eye(3, V).asDynamic.hstack(se3matdyn[0 .. 2, 3..3]).vstack(
             matrix(@[@[0.V, 0, 0, 1]]))).asStatic(4, 4)
   let
@@ -405,11 +405,12 @@ func log6*[V](tt: QuadMatrix[V]): QuadMatrix[V] =
     omgmat = log3(rr)
 
   if omgmat == statics.zeros(3, 3, V):
-    return (zeros[V](3, 3).vstack(matrix(@[@[T[0, 3], T[1, 3], T[2,
-            3]]])).hstack(matrix(@[@[0.0, 0, 0, 0]]))).asStatic(4, 4)
+    return (zeros[V](3, 3).vstack(matrix(@[@[tt[0, 3], tt[1, 3], tt[2, 3]]])).
+                           hstack(matrix(@[@[0.0, 0, 0, 0]]))).
+            asStatic(4, 4)
   else:
     let
-      theta = arccos((trace(R) - 1.V) / 2.0)
+      theta = arccos((trace(rr) - 1.V) / 2.0)
       invtheta = 1/theta
       tmp1 = (eye[V](3) -
       (omgmat / 2.0).asDynamic) +
@@ -420,7 +421,7 @@ func log6*[V](tt: QuadMatrix[V]): QuadMatrix[V] =
 
     result = tmp3.vstack(matrix(@[@[0.0, 0, 0, 0]])).asStatic(4, 4)
 
-func projectToSO3*[V](mat: TriMatrix[V]): TriMatrix[V] =
+func projectToSo3*[V](mat: TriMatrix[V]): TriMatrix[V] =
   ## Returns a projection of mat into SO(3)
   ## :param mat: A matrix near SO(3) to project to SO(3)
   ## :return: The closest matrix to R that is in SO(3)

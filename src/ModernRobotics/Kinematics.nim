@@ -118,10 +118,10 @@ func jacobianBody*[I: static[int], V](
     tt = eye[V](4)
 
   for i in countdown(I - 2, 0):
-    T = T * exp6(toSe3(blist.column(i + 1) * -thetalist[i + 1])).asDynamic
+    tt = tt * exp6(toSe3(blist.column(i + 1) * -thetalist[i + 1])).asDynamic
 
-    jb[0..5, i..i] = adjoint(T.asStatic(4, 4)).asDynamic * blist.column(
-            i).asDynamic.asMatrix(6, 1)
+    jb[0..5, i..i] = adjoint(tt.asStatic(4, 4)).asDynamic *
+                        blist.column(i).asDynamic.asMatrix(6, 1)
 
   result = jb.asStatic(6, I)
 
@@ -155,8 +155,8 @@ func jacobianSpace*[I: static[int], V](
   var js = slist.asDynamic.clone
   var tt = eye[V](4).asStatic(4, 4)
   for i in 1 .. I - 1:
-    T = T * exp6(toSe3(slist.column(i - 1) * thetalist[i - 1]))
-    js[0..5, i..i] = (T.adjoint() * slist.column(i)).asDynamic.asMatrix(6, 1)
+    tt = tt * exp6(toSe3(slist.column(i - 1) * thetalist[i - 1]))
+    js[0..5, i..i] = (tt.adjoint() * slist.column(i)).asDynamic.asMatrix(6, 1)
   result = js.asStatic(6, I)
 
 func iKinBody*[I: static[int], V](
