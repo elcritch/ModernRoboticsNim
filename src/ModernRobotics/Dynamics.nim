@@ -7,28 +7,32 @@ import RigidBodyMotions
 template `++`(a: int): untyped =
   a + 1
 
+{.push hint[Name]: off.}
 
 func ad*[A](V: HexVector[A]): HexMatrix[A] =
-  ##[Calculate the 6x6 matrix [adV] of the given 6-vector
-  :param V: A 6-vector spatial velocity
-  :return: The corresponding 6x6 matrix [adV]
-  Used to calculate the Lie bracket [V1, V2] = [adV1]V2
-  Example Input:
-    V = vector([1, 2, 3, 4, 5, 6])
-  Output:
-    matrix([  [ 0, -3,  2,  0,  0,  0],
-      [ 3,  0, -1,  0,  0,  0],
-      [-2,  1,  0,  0,  0,  0],
-      [ 0, -6,  5,  0, -3,  2],
-      [ 6,  0, -4,  3,  0, -1],
-      [-5,  4,  0, -2,  1,  0]])
-    ]##
+  ## Calculate the 6x6 matrix [adV] of the given 6-vector
+  ##  :param V: A 6-vector spatial velocity
+  ##  :return: The corresponding 6x6 matrix [adV]
+  ## 
+  ## Used to calculate the Lie bracket [V1, V2] = [adV1]V2
+  ## 
+  ## Example Input:
+  ##   V = vector([1, 2, 3, 4, 5, 6])
+  ## 
+  ## Output:
+  ##   matrix([  [ 0, -3,  2,  0,  0,  0],
+  ##     [ 3,  0, -1,  0,  0,  0],
+  ##     [-2,  1,  0,  0,  0,  0],
+  ##     [ 0, -6,  5,  0, -3,  2],
+  ##     [ 6,  0, -4,  3,  0, -1],
+  ##     [-5,  4,  0, -2,  1,  0]])
+  ## 
   let omgmat = VecToso3(vector([V[0], V[1], V[2]])).asDynamic
   return vstack(hstack(omgmat, zeros(3, 3).asDynamic),
                hstack(VecToso3(vector([V[3], V[4], V[5]])).asDynamic,
                    omgmat)).asStatic(6, 6)
 
-func InverseDynamics*[N, V](thetalist: StaticVector[N, V],
+func inverseDynamics*[N, V](thetalist: StaticVector[N, V],
                           dthetalist: StaticVector[N, V],
                           ddthetalist: StaticVector[N, V],
                           g: TriVector[V],
@@ -37,56 +41,64 @@ func InverseDynamics*[N, V](thetalist: StaticVector[N, V],
                           Glist: seq[HexMatrix[V]],
                           Slist: StaticMatrix[6, N, V]):
                           StaticVector[N, V] =
-  ##[Computes inverse dynamics in the space frame for an open chain robot
-  :param thetalist: n-vector of joint variables
-  :param dthetalist: n-vector of joint rates
-  :param ddthetalist: n-vector of joint accelerations
-  :param g: Gravity vector g
-  :param Ftip: Spatial force applied by the end-effector expressed in frame
-    {n+1}
-  :param Mlist: List of link frames {i} relative to {i-1} at the home
-    position
-  :param Glist: Spatial inertia matrices Gi of the links
-  :param Slist: Screw axes Si of the joints in a space frame, in the format
-    of a matrix with axes as the columns
-  :return: The n-vector of required joint forces/torques
-  This function uses forward-backward Newton-Euler iterations to solve the
-  equation:
-  taulist = Mlist(thetalist)ddthetalist + c(thetalist,dthetalist) \
-    + g(thetalist) + Jtr(thetalist)Ftip
-  Example Input (3 Link Robot):
-    thetalist = vector([0.1, 0.1, 0.1])
-    dthetalist = vector([0.1, 0.2, 0.3])
-    ddthetalist = vector([2, 1.5, 1])
-    g = vector([0, 0, -9.8])
-    Ftip = vector([1, 1, 1, 1, 1, 1])
-    M01 = matrix([[1, 0, 0,        0],
-      [0, 1, 0,        0],
-      [0, 0, 1, 0.089159],
-      [0, 0, 0,        1]])
-    M12 = matrix([[ 0, 0, 1,    0.28],
-      [ 0, 1, 0, 0.13585],
-      [-1, 0, 0,       0],
-      [ 0, 0, 0,       1]])
-    M23 = matrix([[1, 0, 0,       0],
-      [0, 1, 0, -0.1197],
-      [0, 0, 1,   0.395],
-      [0, 0, 0,       1]])
-    M34 = matrix([[1, 0, 0,       0],
-      [0, 1, 0,       0],
-      [0, 0, 1, 0.14225],
-      [0, 0, 0,       1]])
-    G1 = diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7])
-    G2 = diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393])
-    G3 = diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275])
-    Glist = @[G1, G2, G3]
-    Mlist = @[M01, M12, M23, M34]
-    Slist = matrix([[1.0, 0, 1,      0, 1,     0],
-      [0.0, 1, 0, -0.089, 0,     0],
-      [0.0, 1, 0, -0.089, 0, 0.425]]).T
-    Output:
-      vector([74.69616155, -33.06766016, -3.23057314])
-    ]##
+  ## Computes inverse dynamics in the space frame for an open chain robot
+  ##  :param thetalist: n-vector of joint variables
+  ##  :param dthetalist: n-vector of joint rates
+  ##  :param ddthetalist: n-vector of joint accelerations
+  ##  :param g: Gravity vector g
+  ##  :param Ftip: Spatial force applied by the end-effector expressed in frame
+  ##    {n+1}
+  ##  :param Mlist: List of link frames {i} relative to {i-1} at the home
+  ##    position
+  ##  :param Glist: Spatial inertia matrices Gi of the links
+  ##  :param Slist: Screw axes Si of the joints in a space frame, in the format
+  ##    of a matrix with axes as the columns
+  ##  :return: The n-vector of required joint forces/torques
+  ## 
+  ## This function uses forward-backward Newton-Euler iterations to solve the
+  ## equation:
+  ## 
+  ##     taulist = Mlist(thetalist)ddthetalist + c(thetalist,dthetalist) 
+  ##                + g(thetalist) + Jtr(thetalist)Ftip
+  ## 
+  ## Example Input (3 Link Robot):
+  ## 
+  ##   thetalist = vector([0.1, 0.1, 0.1])
+  ##   dthetalist = vector([0.1, 0.2, 0.3])
+  ##   ddthetalist = vector([2, 1.5, 1])
+  ##   g = vector([0, 0, -9.8])
+  ##   Ftip = vector([1, 1, 1, 1, 1, 1])
+  ## 
+  ##   M01 = matrix([[1, 0, 0,        0],
+  ##     [0, 1, 0,        0],
+  ##     [0, 0, 1, 0.089159],
+  ##     [0, 0, 0,        1]])
+  ##   M12 = matrix([[ 0, 0, 1,    0.28],
+  ##     [ 0, 1, 0, 0.13585],
+  ##     [-1, 0, 0,       0],
+  ##     [ 0, 0, 0,       1]])
+  ##   M23 = matrix([[1, 0, 0,       0],
+  ##     [0, 1, 0, -0.1197],
+  ##     [0, 0, 1,   0.395],
+  ##     [0, 0, 0,       1]])
+  ##   M34 = matrix([[1, 0, 0,       0],
+  ##     [0, 1, 0,       0],
+  ##     [0, 0, 1, 0.14225],
+  ##     [0, 0, 0,       1]])
+  ## 
+  ##   G1 = diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7])
+  ##   G2 = diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393])
+  ##   G3 = diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275])
+  ##   Glist = @[G1, G2, G3]
+  ##   Mlist = @[M01, M12, M23, M34]
+  ##   Slist = matrix([[1.0, 0, 1,      0, 1,     0],
+  ##     [0.0, 1, 0, -0.089, 0,     0],
+  ##     [0.0, 1, 0, -0.089, 0, 0.425]]).T
+  ## 
+  ##   Output:
+  ##     vector([74.69616155, -33.06766016, -3.23057314])
+  ## 
+  
   var
     n = thetalist.N
     Mi = eye[V](4)
@@ -96,6 +108,7 @@ func InverseDynamics*[N, V](thetalist: StaticVector[N, V],
     Vdi = zeros[V](6, ++N)
     Fi = Ftip.asDynamic.asMatrix(6, 1).clone
     taulist = zeros[V](N)
+  
   Vdi[All, 0..0] = hstack(vector([0.0, 0, 0]).asDynamic, -1.0 *
       g.asDynamic).asmatrix(6, 1)
 
@@ -543,3 +556,5 @@ func InverseDynamicsTrajectory[N, n, V](thetamat: StaticMatrix[N, n, V],
   return taumat.T
 
 #func ForwardDynamicsTrajectory
+
+{.pop.}

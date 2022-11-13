@@ -12,7 +12,7 @@ type
   TransformationMatrix* = QuadMatrix
   HomogenousMatrix* = QuadMatrix
 
-  so3mat* = TriMatrix
+  So3Mat* = TriMatrix
 
   TriVector*[V] = StaticVector[3, V]
   HexVector*[V] = StaticVector[6, V]

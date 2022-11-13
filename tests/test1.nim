@@ -132,8 +132,8 @@ suite "kinematics":
   test "AxisAng3":
     check: vtest.AxisAng3 == (normtest, 3.7416573867739413)
 
-  test "AxisAngToRotation":
-    check: AxisAngToRotation(vector([0.0,0,1]),Pi/2) =~ matrix([[0.0,-1,0],
+  test "toRotation":
+    check: toRotation(vector([0.0,0,1]),Pi/2) =~ matrix([[0.0,-1,0],
                                                                 [1.0, 0,0],
                                                                 [0.0, 0,1]])
 
