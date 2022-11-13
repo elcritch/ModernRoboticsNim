@@ -343,7 +343,7 @@ func axisang6*[V](expc6: HexVector[V]): (HexVector[V], V) =
 
   result = (expc6/theta, theta)
 
-func matrixExp6*[V](se3mat: QuadMatrix[V]): QuadMatrix[V] =
+func exp6*[V](se3mat: QuadMatrix[V]): QuadMatrix[V] =
   ## Computes the matrix exponential of an se3 representation of
   ## exponential coordinates
   ## 
@@ -386,8 +386,7 @@ func matrixExp6*[V](se3mat: QuadMatrix[V]): QuadMatrix[V] =
   return tmp1.hstack(tmp2 * tmp3).vstack(matrix(@[@[0.V, 0, 0, 1]])).asStatic(
           4, 4)
 
-
-func matrixLog6*[V](tt: QuadMatrix[V]): QuadMatrix[V] =
+func log6*[V](tt: QuadMatrix[V]): QuadMatrix[V] =
   ## Computes the matrix logarithm of a homogeneous transformation matrix
   ##   :param R: A matrix in SE3
   ##   :return: The matrix logarithm of R

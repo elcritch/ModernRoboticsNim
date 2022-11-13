@@ -120,8 +120,7 @@ func inverseDynamics*[N, V](
     Mi = Mi * Mlist[i].asDynamic
     Ai[All, i..i] = (adjoint(transInv(Mi.asStatic(4, 4))) * Slist.column(
         i)).asMatrix(6, 1).asDynamic
-    AdTi[i] = adjoint(matrixExp6(toSe3((Ai[All, i..i] * -thetalist[
-        i]).asVector.asStatic(6))) * transInv(Mlist[i]))
+    AdTi[i] = adjoint(exp6(toSe3((Ai[All, i..i] * -thetalist[i]).asVector.asStatic(6))) * transInv(Mlist[i]))
     Vi[All, ++i .. ++i] = (AdTi[i].asDynamic * Vi[All, i..i]) + Ai[All, i..i] *
         dthetalist[i]
 
@@ -335,7 +334,7 @@ func gravityForces*[N, V](
                   Glist,
                   Slist)
 
-func dendEffectorForces*[N, V](
+func endEffectorForces*[N, V](
     thetalist: StaticVector[N, V],
     Ftip: HexVector[V],
     Mlist: seq[HomogenousMatrix[V]],
@@ -589,5 +588,6 @@ func inverseDynamicsTrajectory[N, n, V](
 
   return taumat.T
 
+#func ForwardDynamicsTrajectory
 
 {.pop.}

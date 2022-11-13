@@ -75,7 +75,7 @@ func computedTorque*[n, V](
   ##     vector([133.00525246, -29.94223324, -3.03276856])
   ## 
   let ee = thetalistd - thetalist
-  let massMatrix = MassMatrix(thetalist, mlist, glist, slist)
-  let ikMatrix = InverseDynamics(thetalist, dthetalist, ddthetalistd, g,
-                          vector([0.0, 0, 0, 0, 0, 0]), mList, gList, sList)
+  let massMatrix = massMatrix(thetalist, mlist, glist, slist)
+  let ikMatrix = inverseDynamics(thetalist, dthetalist, ddthetalistd, g,
+                                 vector([0.0, 0, 0, 0, 0, 0]), mList, gList, sList)
   return (massMatrix*(kp*ee + ki*(eint + ee) + kd*(dthetalistd - dthetalist))) + ikMatrix
