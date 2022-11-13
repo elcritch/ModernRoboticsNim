@@ -58,6 +58,8 @@ proc pretty*[V](mat: (RotationMatrix[V], PositionVec[V]); precision = 2;
   result.add "\nPosition Vector\n"
   result.add mat[1].pretty
 
+{.push hint[Name]: off.}
+
 type poly* {.pure.} = enum
   cubic, quintic
 
@@ -74,20 +76,14 @@ template trace*(mat: Matrices): untyped =
   mat.tr
 
 func cross*[V](v1, v2: TriVector[V]): TriVector[V] =
-  ##[
-      implements the cross product for 3-d vectors
-    ]##
-  #let (v1,v2) = (v1.asDynamic,v2.asDynamic)
-
+  # implements the cross product for 3-d vectors
   result = [v1[1]*v2[2] - v1[2]*v2[1],
              v1[2]*v2[0] - v1[0]*v2[2],
              v1[0]*v2[1] - v1[1]*v2[0]].vector
 
 template `><`*[V](v1, v2: Trivector[V]): untyped =
-  ##[
-    Convenient template for making a cross product operator that actually 
-    looks like a cross product
-  ]##
+  ## Convenient template for making a cross product operator that actually 
+  ## looks like a cross product
   cross(v1, v2)
 
 proc outer*[V](u, v: Vector[V]): Matrix[V] =
@@ -98,29 +94,27 @@ proc outer*[N, M, V](u: StaticVector[N, V]; v: StaticVector[M,
         V]): StaticMatrix[N, M, V] =
   outer(u.asDynamic, v.asDynamic).asStatic(N, M)
 
-func NearZero*(f: float): bool =
-  ##[
-        Determines whether a scalar is small enough to be treated as zero
-    :param f: A scalar input to check
-    :return: True if z is close to zero, false otherwise
-    Example Input:
-        f = -1e-7
-    Output:
-        True
-    ]##
+func nearZero*(f: float): bool =
+  ## Determines whether a scalar is small enough to be treated as zero
+  ##  :param f: A scalar input to check
+  ##  :return: True if z is close to zero, false otherwise
+  ## 
+  ## Example Input:
+  ##  f = -1e-7
+  ## Output:
+  ##  True
   abs(f) < 1e-6
 
-func Normalize*[V](v: TriVector[V]): TriVector[V] =
-  ##[
-        Normalizes a vector
-    :param v: 3 vector
-    :return: A unit vector pointing in the same direction as v
-    Example Input:
-        v = vector(@[1, 2, 3])
-    Output:
-        vector([0.26726124, 0.53452248, 0.80178373])
-    
-    ]##
+func normalize*[V](v: TriVector[V]): TriVector[V] =
+  ## Normalizes a vector
+  ## :param v: 3 vector
+  ## :return: A unit vector pointing in the same direction as v
+  ## 
+  ## Example Input:
+  ##    v = vector(@[1, 2, 3])
+  ## Output:
+  ##    vector([0.26726124, 0.53452248, 0.80178373])
+  ##
   v/v.norm
 
 
@@ -200,3 +194,5 @@ when isMainModule:
                              #echo e.data.diag
   echo pinv(d)
   echo outer(e, f)
+
+{.pop.}
