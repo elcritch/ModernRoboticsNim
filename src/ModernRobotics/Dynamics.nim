@@ -33,7 +33,7 @@ func ad*[A](V: HexVector[A]): HexMatrix[A] =
                 omgmat)
          ).asStatic(6, 6)
 
-func inverseDynamics*[N, V](
+func inverseDynamics*[N: static[int], V](
     thetalist: StaticVector[N, V],
     dthetalist: StaticVector[N, V],
     ddthetalist: StaticVector[N, V],
@@ -139,7 +139,7 @@ func inverseDynamics*[N, V](
     taulist[i] = (Fi.T * Ai[All, i..i])[0, 0]
   return taulist.asStatic(N)
 
-func massMatrix*[N, V](
+func massMatrix*[N: static[int], V](
     thetalist: StaticVector[N, V],
     Mlist: seq[HomogenousMatrix[V]],
     Glist: seq[HexMatrix[V]],
