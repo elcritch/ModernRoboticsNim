@@ -158,7 +158,7 @@ func log3*[V](rr: RotationMatrix[V]): TriMatrix[V] =
       omg = ((1.0 / sqrt(2.0 * (rr[1, 1]))) * vector([rr[0, 1], rr[1, 1],
               1.0 + rr[2, 1]]))
     else:
-      omg = ((1.0 / sqrt(2.0 * (R[0, 0]))) * vector([rr[0, 0], rr[1, 0],
+      omg = ((1.0 / sqrt(2.0 * (rr[0, 0]))) * vector([rr[0, 0], rr[1, 0],
               1.0 + rr[2, 0]]))
     return toSo3(Pi * omg)
   else:
