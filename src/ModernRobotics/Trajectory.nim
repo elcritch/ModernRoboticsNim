@@ -6,38 +6,44 @@ import RigidBodyMotions
 
 
 func cubicTimeScaling*[V: SomeFloat](Tf: V, t: V): V =
-  ##[Computes s(t) for a cubic time scaling
-  :param Tf: Total time of the motion in seconds from rest to rest
-  :param t: The current time t satisfying 0 < t < Tf
-  :return: The path parameter s(t) corresponding to a third-order
-    polynomial motion that begins and ends at zero velocity
-  Example Input:
-    Tf = 2
-    t = 0.6
-  Output:
-    0.216
-  ]##
+  ## Computes s(t) for a cubic time scaling
+  ## :param Tf: Total time of the motion in seconds from rest to rest
+  ## :param t: The current time t satisfying 0 < t < Tf
+  ## :return: The path parameter s(t) corresponding to a third-order
+  ##   polynomial motion that begins and ends at zero velocity
+  ## 
+  ## Example Input:
+  ##   Tf = 2
+  ##   t = 0.6
+  ## 
+  ## Output:
+  ##   0.216
+  ## 
   return (3 * (1.0 * t / Tf) ^ 2) - (2 * (1.0 * t / Tf) ^ 3)
 
 func quinticTimeScaling*[V: SomeFloat](Tf: V, t: V): V =
-  ##[Computes s(t) for a quintic time scaling
-  :param Tf: Total time of the motion in seconds from rest to rest
-  :param t: The current time t satisfying 0 < t < Tf
-  :return: The path parameter s(t) corresponding to a fifth-order
-    polynomial motion that begins and ends at zero velocity and zero
-    acceleration
-  Example Input:
-    Tf = 2
-    t = 0.6
-  Output:
-    0.16308
-  ]##
-  return 10 * (1.0 * t / Tf) ^ 3 - 15 * (1.0 * t / Tf) ^ 4 + 6 * (1.0 * t /
-          Tf) ^ 5
+  ## Computes s(t) for a quintic time scaling
+  ## :param Tf: Total time of the motion in seconds from rest to rest
+  ## :param t: The current time t satisfying 0 < t < Tf
+  ## :return: The path parameter s(t) corresponding to a fifth-order
+  ##   polynomial motion that begins and ends at zero velocity and zero
+  ##   acceleration
+  ## 
+  ## Example Input:
+  ##   Tf = 2
+  ##   t = 0.6
+  ## 
+  ## Output:
+  ##   0.16308
+  ## 
+  return 10 * (1.0 * t / Tf) ^ 3 +
+        -15 * (1.0 * t / Tf) ^ 4 +
+          6 * (1.0 * t / Tf) ^ 5
 
 func jointTrajectory*[N, V](
     thetastart: StaticVector[N, V],
-    thetaend: StaticVector[N, V], Tf: V,
+    thetaend: StaticVector[N, V],
+    Tf: V,
     n: static[int],
     scale: Poly
 ): StaticMatrix[n, N, V] =
