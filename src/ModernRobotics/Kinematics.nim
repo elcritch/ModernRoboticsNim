@@ -5,34 +5,37 @@ import RigidBodyMotions
 
 {.push hint[Name]: off.}
 
-func FKinBody*[I: static[int], V](Mat: HomogenousMatrix[V], Blist: StaticMatrix[
+func fKinBody*[I: static[int], V](Mat: HomogenousMatrix[V], Blist: StaticMatrix[
         6, I, V], thetalist: StaticVector[I, V]): HomogenousMatrix[V] =
-  ##[
-        Computes forward kinematics in the body frame for an open chain robot
-    :param M: The home configuration (position and orientation) of the end-
-              effector
-    :param Blist: The joint screw axes in the end-effector frame when the
-                  manipulator is at the home position, in the format of a
-                  matrix with axes as the columns
-    :param thetalist: A list of joint coordinates
-    :return: A homogeneous transformation matrix representing the end-
-             effector frame when the joints are at the specified coordinates
-             (i.t.o Body Frame)
-    Example Input:
-        M = matrix([  [-1, 0,  0, 0],
-                      [ 0, 1,  0, 6],
-                      [ 0, 0, -1, 2],
-                      [ 0, 0,  0, 1]])
-        Blist = matrix([  [0, 0, -1, 2, 0,   0],
-                          [0, 0,  0, 0, 1,   0],
-                          [0, 0,  1, 0, 0, 0.1]]).T
-        thetalist = vector([Pi / 2.0, 3, Pi])
-    Output:
-        matrix([  [0, 1,  0,         -5],
-                  [1, 0,  0,          4],
-                  [0, 0, -1, 1.68584073],
-                  [0, 0,  0,          1]])
-    ]##
+  ## Computes forward kinematics in the body frame for an open chain robot
+  ## 
+  ## :param M: The home configuration (position and orientation) of the end-
+  ##           effector
+  ## :param Blist: The joint screw axes in the end-effector frame when the
+  ##               manipulator is at the home position, in the format of a
+  ##               matrix with axes as the columns
+  ## :param thetalist: A list of joint coordinates
+  ## :return: A homogeneous transformation matrix representing the end-
+  ##          effector frame when the joints are at the specified coordinates
+  ##          (i.t.o Body Frame)
+  ## 
+  ## Example Input:
+  ##     M = matrix([  [-1, 0,  0, 0],
+  ##                   [ 0, 1,  0, 6],
+  ##                   [ 0, 0, -1, 2],
+  ##                   [ 0, 0,  0, 1]])
+  ##     Blist = matrix([  [0, 0, -1, 2, 0,   0],
+  ##                       [0, 0,  0, 0, 1,   0],
+  ##                       [0, 0,  1, 0, 0, 0.1]]).T
+  ##     thetalist = vector([Pi / 2.0, 3, Pi])
+  ## 
+  ## Output:
+  ##     matrix([  [0, 1,  0,         -5],
+  ##               [1, 0,  0,          4],
+  ##               [0, 0, -1, 1.68584073],
+  ##               [0, 0,  0,          1]])
+  ## 
+  
   var tmp = Mat.asDynamic
 
   var i = 0
@@ -41,34 +44,38 @@ func FKinBody*[I: static[int], V](Mat: HomogenousMatrix[V], Blist: StaticMatrix[
     inc i
   result = tmp.asStatic(4, 4)
 
-func FKinSpace*[I: static[int], V](M: HomogenousMatrix[V], Slist: StaticMatrix[
-        6, I, V], thetalist: StaticVector[I, V]): HomogenousMatrix[V] =
-  ##[
-        Computes forward kinematics in the space frame for an open chain robot
-    :param M: The home configuration (position and orientation) of the end-
-              effector
-    :param Slist: The joint screw axes in the space frame when the
-                  manipulator is at the home position, in the format of a
-                  matrix with axes as the columns
-    :param thetalist: A list of joint coordinates
-    :return: A homogeneous transformation matrix representing the end-
-             effector frame when the joints are at the specified coordinates
-             (i.t.o Space Frame)
-    Example Input:
-        M = matrix([  [-1, 0,  0, 0],
-                      [ 0, 1,  0, 6],
-                      [ 0, 0, -1, 2],
-                      [ 0, 0,  0, 1]])
-        Slist = matrix([  [0, 0,  1,  4, 0,    0],
-                          [0, 0,  0,  0, 1,    0],
-                          [0, 0, -1, -6, 0, -0.1]]).T
-        thetalist = vector([Pi / 2.0, 3, Pi])
-    Output:
-        matrix([  [0, 1,  0,         -5],
-                  [1, 0,  0,          4],
-                  [0, 0, -1, 1.68584073],
-                  [0, 0,  0,          1]])
-    ]##
+func fKinSpace*[I: static[int], V](
+    M: HomogenousMatrix[V],
+    Slist: StaticMatrix[6, I, V],
+    thetalist: StaticVector[I, V]
+): HomogenousMatrix[V] =
+  ## Computes forward kinematics in the space frame for an open chain robot
+  ## 
+  ## :param M: The home configuration (position and orientation) of the end-
+  ##           effector
+  ## :param Slist: The joint screw axes in the space frame when the
+  ##               manipulator is at the home position, in the format of a
+  ##               matrix with axes as the columns
+  ## :param thetalist: A list of joint coordinates
+  ## :return: A homogeneous transformation matrix representing the end-
+  ##          effector frame when the joints are at the specified coordinates
+  ##          (i.t.o Space Frame)
+  ## 
+  ## Example Input:
+  ##     M = matrix([  [-1, 0,  0, 0],
+  ##                   [ 0, 1,  0, 6],
+  ##                   [ 0, 0, -1, 2],
+  ##                   [ 0, 0,  0, 1]])
+  ##     Slist = matrix([  [0, 0,  1,  4, 0,    0],
+  ##                       [0, 0,  0,  0, 1,    0],
+  ##                       [0, 0, -1, -6, 0, -0.1]]).T
+  ##     thetalist = vector([Pi / 2.0, 3, Pi])
+  ## 
+  ## Output:
+  ##     matrix([  [0, 1,  0,         -5],
+  ##               [1, 0,  0,          4],
+  ##               [0, 0, -1, 1.68584073],
+  ##               [0, 0,  0,          1]])
 
   var i = I - 1
   #var i = M.N - 2
@@ -207,7 +214,7 @@ func iKinBody*[I: static[int], V](
     thetalist = thetalist0.clone
     i = 0
 
-    Vb = se3ToVec(log6((TransInv(FKinBody(M, Blist, thetalist)) * T)))
+    Vb = se3ToVec(log6((transInv(fKinBody(M, Blist, thetalist)) * T)))
     err = norm(vector([Vb[0], Vb[1], Vb[2]])) > eomg or norm(vector([Vb[3],
             Vb[4], Vb[5]])) > ev
   while err and (i < maxiterations):
