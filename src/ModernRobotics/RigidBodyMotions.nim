@@ -85,7 +85,7 @@ func axisAng3*(expc3: TriVector): (TriVector, float) =
                vector [0.0, 1.0, 0.0]]:
     result = (expc3, 0.0)
   else:
-    result = (expc3.Normalize, expc3.norm)
+    result = (expc3.normalize(), expc3.norm)
 
 func toRotation*[V](u: TriVector[V], theta: V): RotationMatrix[V] =
   ## Converts a 3-vector and and an angle theta into a rotation matrix
@@ -255,13 +255,10 @@ func toSe3*[V](hh: HexVector[V]): QuadMatrix[V] =
   ##               [-2,  1,  0, 6],
   ##               [ 0,  0,  0, 0]])
   ## 
-  let hh = hh.asMatrix(1, 6).asDynamic
+  let hh = hh.asMatrix(1,6).asDynamic
+  (toSo3(hh[0..0,0..2].asVector.asStatic(3)).asDynamic.hstack(hh[0..0,3..5].T).vstack(matrix(@[@[0.V,0,0,0]]))).asStatic(4,4)
 
-  hh[0..0, 0..2].asVector.asStatic(3).asDynamic.
-    hstack(hh[0..0, 3..5].T).
-    vstack(matrix(@[@[0.V, 0, 0, 0]])).
-    toSo3().
-    asStatic(4, 4)
+
 
 func se3ToVec*[V](qq: QuadMatrix[V]): HexVector[V] =
   ## Converts an se3 matrix into a spatial velocity vector
@@ -376,7 +373,7 @@ func exp6*[V](se3mat: QuadMatrix[V]): QuadMatrix[V] =
     omgmat = (subse3mat / theta).asDynamic
 
   var
-    tmp1 = matrixExp3(subse3mat).asDynamic
+    tmp1 = exp3(subse3mat).asDynamic
 
     tmp2 = theta * eye[V](3) +
             (1 - cos(theta)) * omgmat +

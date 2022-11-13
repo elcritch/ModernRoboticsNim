@@ -5,6 +5,7 @@ import neo/statics
 import math
 
 
+{.push hint[Name]: off.}
 ## TODO: split test1 into multiple files for each folder in ModernRobotics
 
 
@@ -110,9 +111,9 @@ suite "kinematics":
     let m = matrix([[1.0,2,3],[4.0,5,6],[7.0,8,9]])
     check: m.trace == 15.0
   test "NearZero":
-    check: NearZero(-1e-7)
+    check: nearZero(-1e-7)
   test "Normalize":
-    check: vtest.Normalize == normtest
+    check: vtest.normalize() == normtest
   test "cross product":
     check: cross(vector([1.0,0,0]),vector([0.0,1,0])) == vector([0.0,0,1])
   test "outer product":
@@ -122,15 +123,15 @@ suite "kinematics":
                                   @[6.0, 4, 2],
                                   @[9.0, 6, 3]])
   test "RotInv":
-    check: RotInv(rottest) == matrix([[0.0,1,0],
+    check: rotInv(rottest) == matrix([[0.0,1,0],
                                       [0.0,0,1],
                                       [1.0,0,0]])
   test "VecTos03":
-    check: omgtest.VecToso3 == so3test
+    check: omgtest.toSo3 == so3test
   test "so3ToVec":
     check: so3test.so3ToVec == omgtest
   test "AxisAng3":
-    check: vtest.AxisAng3 == (normtest, 3.7416573867739413)
+    check: vtest.axisAng3 == (normtest, 3.7416573867739413)
 
   test "toRotation":
     check: toRotation(vector([0.0,0,1]),Pi/2) =~ matrix([[0.0,-1,0],
@@ -139,19 +140,19 @@ suite "kinematics":
 
   test "MatrixExp3":
       
-      check: so3test.MatrixExp3 =~ matrix([ [-0.69492056,  0.71352099, 0.08929286],
+      check: so3test.exp3() =~ matrix([ [-0.69492056,  0.71352099, 0.08929286],
                                             [-0.19200697, -0.30378504, 0.93319235],
                                             [ 0.69297817,  0.6313497,  0.34810748]])
   test "MatrixLog3":
-    check: rottest.MatrixLog3 =~ matrix([ [0.0,         -1.20919958,  1.20919958],
+    check: rottest.log3() =~ matrix([ [0.0,         -1.20919958,  1.20919958],
                                           [1.20919958,            0, -1.20919958],
                                           [-1.20919958,  1.20919958,           0]])
   test "RpToTrans":
-    let R = matrix([  [1.0, 0,  0],
-                      [0.0, 0, -1],
-                      [0.0, 1,  0]])
+    let R = matrix([[1.0, 0,  0],
+                    [0.0, 0, -1],
+                    [0.0, 1,  0]])
     let p = vector([1.0,2,5])
-    check: RptoTrans(R,p) == matrix([[1.0, 0,  0, 1],
+    check: rptoTrans(R,p) == matrix([[1.0, 0,  0, 1],
                                      [0.0, 0, -1, 2],
                                      [0.0, 1,  0, 5],
                                      [0.0, 0,  0, 1]])
@@ -160,7 +161,7 @@ suite "kinematics":
                     [0.0, 0, -1, 0],
                     [0.0, 1,  0, 3],
                     [0.0, 0,  0, 1]])
-    let output = TransToRp(T)
+    let output = transToRp(T)
     check: output[0] == matrix([ [1.0, 0.0,  0.0],
                                      [0.0, 0.0, -1.0],
                                      [0.0, 1.0,  0.0]])
@@ -168,16 +169,16 @@ suite "kinematics":
   
   test "TransInv":
    
-    check: homogtranstest.TransInv == matrix([[1.0,  0, 0,  0],
+    check: homogtranstest.transInv() == matrix([[1.0,  0, 0,  0],
                                  [0.0,  0, 1, -3],
                                  [0.0, -1, 0,  0],
                                  [0.0,  0, 0,  1]])
   test "VecToSe3":
     
-    check: vec6test.VecTose3 == se3test
+    check: vec6test.toSe3() == se3test
 
   test "se3ToVec":
-    check:  se3test.se3ToVec == vec6test
+    check:  se3test.se3ToVec() == vec6test
   
   test "Adjoint":
     let Q = matrix([  [1.0, 0,  0, 0],
@@ -195,24 +196,24 @@ suite "kinematics":
       q = vector([3.0, 0, 0])
       s = vector([0.0, 0, 1])
       h = 2.0
-    check: ScrewToAxis(q,s,h) == vector([0.0,0,1,0,-3,2])
+    check: screwToAxis(q,s,h) == vector([0.0,0,1,0,-3,2])
 
   test "AxisAng6":
-    check: vector([1.0, 0, 0, 1, 2, 3]).AxisAng6 == 
-          (vector([1.0, 0, 0, 1, 2, 3]), 1.0)
+    check: vector([1.0, 0, 0, 1, 2, 3]).axisAng6() == 
+             (vector([1.0, 0, 0, 1, 2, 3]), 1.0)
 
   test "MatrixExp6":
     let se3mat = matrix( [[0.0,          0,           0,          0],
                           [0.0,          0, -1.57079632, 2.35619449],
                           [0.0, 1.57079632,           0, 2.35619449],
                           [0.0,          0,           0,          0]])
-    check: se3mat.MatrixExp6 =~ matrix([  [1.0, 0.0,  0.0, 0.0],
+    check: se3mat.exp6() =~ matrix([  [1.0, 0.0,  0.0, 0.0],
                                           [0.0, 0.0, -1.0, 0.0],
                                           [0.0, 1.0,  0.0, 3.0],
                                           [0.0,   0,    0,   1]])
   
   test "MatrixLog6":
-    check homogtranstest.MatrixLog6 =~ matrix([   [0.0,          0,           0,           0],
+    check homogtranstest.log6() =~ matrix([   [0.0,          0,           0,           0],
                                                   [0.0,          0, -1.57079633,  2.35619449],
                                                   [0.0, 1.57079633,           0,  2.35619449],
                                                   [0.0,          0,           0,           0]])
@@ -429,3 +430,5 @@ suite "kinematics":
                                 1.3, 1.2, 1.1)
     check: comtor =~ vector([133.00525246, -29.94223324, -3.03276856])
                           
+
+{.pop.}

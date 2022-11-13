@@ -35,37 +35,41 @@ func quinticTimeScaling*[V: SomeFloat](Tf: V, t: V): V =
   return 10 * (1.0 * t / Tf) ^ 3 - 15 * (1.0 * t / Tf) ^ 4 + 6 * (1.0 * t /
           Tf) ^ 5
 
-func jointTrajectory*[N, V](thetastart: StaticVector[N, V],
-                         thetaend: StaticVector[N, V], Tf: V,
-                         n: static[int], scale: poly): StaticMatrix[n, N, V] =
-  ##[
-    Computes a straight-line trajectory in joint space
-    :param thetastart: The initial joint variables
-    :param thetaend: The final joint variables
-    :param Tf: Total time of the motion in seconds from rest to rest
-    :param n: The number of points n > 1 (Start and stop) in the discrete
-              representation of the trajectory
-    :param method: The time-scaling method, where 3 indicates cubic (third-
-                   order polynomial) time scaling and 5 indicates quintic
-                   (fifth-order polynomial) time scaling
-    :return: A trajectory as an n x N matrix, where each row is an n-vector
-             of joint variables at an instant in time. The first row is
-             thetastart and the Nth row is thetaend . The elapsed time
-             between each row is Tf / (N - 1)
-    Example Input:
-        thetastart = vector([1, 0, 0, 1, 1, 0.2, 0,1])
-        thetaend = vector([1.2, 0.5, 0.6, 1.1, 2, 2, 0.9, 1])
-        Tf = 4
-        N = 6
-        scale = cubic
-    Output:
-        matrix([  [     1,     0,      0,      1,     1,    0.2,      0, 1]
-                  [1.0208, 0.052, 0.0624, 1.0104, 1.104, 0.3872, 0.0936, 1]
-                  [1.0704, 0.176, 0.2112, 1.0352, 1.352, 0.8336, 0.3168, 1]
-                  [1.1296, 0.324, 0.3888, 1.0648, 1.648, 1.3664, 0.5832, 1]
-                  [1.1792, 0.448, 0.5376, 1.0896, 1.896, 1.8128, 0.8064, 1]
-                  [   1.2,   0.5,    0.6,    1.1,     2,      2,    0.9, 1]])
-    ]##
+func jointTrajectory*[N, V](
+    thetastart: StaticVector[N, V],
+    thetaend: StaticVector[N, V], Tf: V,
+    n: static[int],
+    scale: Poly
+): StaticMatrix[n, N, V] =
+  ## Computes a straight-line trajectory in joint space
+  ##  :param thetastart: The initial joint variables
+  ##  :param thetaend: The final joint variables
+  ##  :param Tf: Total time of the motion in seconds from rest to rest
+  ##  :param n: The number of points n > 1 (Start and stop) in the discrete
+  ##            representation of the trajectory
+  ##  :param method: The time-scaling method, where 3 indicates cubic (third-
+  ##                 order polynomial) time scaling and 5 indicates quintic
+  ##                 (fifth-order polynomial) time scaling
+  ##  :return: A trajectory as an n x N matrix, where each row is an n-vector
+  ##           of joint variables at an instant in time. The first row is
+  ##           thetastart and the Nth row is thetaend . The elapsed time
+  ##           between each row is Tf / (N - 1)
+  ## 
+  ##  Example Input:
+  ##      thetastart = vector([1, 0, 0, 1, 1, 0.2, 0,1])
+  ##      thetaend = vector([1.2, 0.5, 0.6, 1.1, 2, 2, 0.9, 1])
+  ##      Tf = 4
+  ##      N = 6
+  ##      scale = cubic
+  ## 
+  ##  Output:
+  ##      matrix([  [     1,     0,      0,      1,     1,    0.2,      0, 1]
+  ##                [1.0208, 0.052, 0.0624, 1.0104, 1.104, 0.3872, 0.0936, 1]
+  ##                [1.0704, 0.176, 0.2112, 1.0352, 1.352, 0.8336, 0.3168, 1]
+  ##                [1.1296, 0.324, 0.3888, 1.0648, 1.648, 1.3664, 0.5832, 1]
+  ##                [1.1792, 0.448, 0.5376, 1.0896, 1.896, 1.8128, 0.8064, 1]
+  ##                [   1.2,   0.5,    0.6,    1.1,     2,      2,    0.9, 1]])
+  ## 
   var
     timegap = Tf / (n.V - 1.0)
     traj = zeros[V](N, n)
@@ -212,6 +216,6 @@ func cartesianTrajectory*[V](
       s = cubicTimeScaling(tf, timegap * i.V)
     else:
       s = quinticTimeScaling(tf, timegap * i.V)
-    result[i] = (vstack(hstack((rstart * matrixExp3(log3(rstart.T * rend) * s)).asDynamic,
+    result[i] = (vstack(hstack((rstart * exp3(log3(rstart.T * rend) * s)).asDynamic,
                 (s * pend + (1 - s) * pstart).asDynamic.asMatrix(3, 1)),
                matrix(@[@[0.0, 0, 0, 1]]))).asStatic(4, 4)
