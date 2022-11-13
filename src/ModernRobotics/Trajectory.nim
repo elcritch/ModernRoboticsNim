@@ -4,7 +4,6 @@ import math
 import DataTypes
 import RigidBodyMotions
 
-
 func cubicTimeScaling*[V: SomeFloat](Tf: V, t: V): V =
   ## Computes s(t) for a cubic time scaling
   ## :param Tf: Total time of the motion in seconds from rest to rest
