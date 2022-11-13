@@ -5,17 +5,17 @@ import neo/statics
 
 
 
-func ComputedTorque*[n,V](thetalist:StaticVector[n,V], 
-                         dthetalist:StaticVector[n,V], 
-                         eint:StaticVector[n,V], 
-                         g:TriVector[V], 
-                         Mlist:seq[HomogenousMatrix[V]], 
-                         Glist:seq[HexMatrix[V]], 
-                         Slist:StaticMatrix[6,n,V], 
-                         thetalistd:StaticVector[n,V], 
-                         dthetalistd:StaticVector[n,V], 
-                         ddthetalistd:StaticVector[n,V], 
-                         Kp:V, Ki:V, Kd:V): StaticVector[n,V] =
+func ComputedTorque*[n, V](thetalist: StaticVector[n, V],
+                         dthetalist: StaticVector[n, V],
+                         eint: StaticVector[n, V],
+                         g: TriVector[V],
+                         Mlist: seq[HomogenousMatrix[V]],
+                         Glist: seq[HexMatrix[V]],
+                         Slist: StaticMatrix[6, n, V],
+                         thetalistd: StaticVector[n, V],
+                         dthetalistd: StaticVector[n, V],
+                         ddthetalistd: StaticVector[n, V],
+                         Kp: V, Ki: V, Kd: V): StaticVector[n, V] =
     ##[
     Computes the joint control torques at a particular time instant
     :param thetalist: n-vector of joint variables
@@ -74,8 +74,8 @@ func ComputedTorque*[n,V](thetalist:StaticVector[n,V],
         vector([133.00525246, -29.94223324, -3.03276856])
     ]##
     let e = thetalistd - thetalist
-    return (MassMatrix(thetalist, Mlist, Glist, Slist) * 
+    return (MassMatrix(thetalist, Mlist, Glist, Slist) *
                   (Kp * e + Ki * (eint + e) +
                   Kd * (dthetalistd - dthetalist))) +
-            InverseDynamics(thetalist, dthetalist, ddthetalistd, g, 
+            InverseDynamics(thetalist, dthetalist, ddthetalistd, g,
                              vector([0.0, 0, 0, 0, 0, 0]), Mlist, Glist, Slist)

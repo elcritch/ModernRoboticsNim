@@ -1,5 +1,5 @@
-import ModernRobotics/[Controls,DataTypes,RigidBodyMotions,
-                        Kinematics,Dynamics, Trajectory]
+import ModernRobotics/[Controls, DataTypes, RigidBodyMotions,
+                        Kinematics, Dynamics, Trajectory]
 
 
 export Controls
